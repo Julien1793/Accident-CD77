@@ -1,15 +1,15 @@
 # -*- coding: cp1252 -*-
 #-------------------------------------------------------------------------------
-# Name:        Génération des accidents en ponctuel
+# Name:        GÃ©nÃ©ration des accidents en ponctuel
 # Author:      J Samaniego
 # Created:     22/07/2019
 # Contenu :
-# Le script génère la donnée accident en ponctuel sur une plage d’année choisie
-# avec les champs de la table accident (caractéristique) et la table lieux souhaités.
-# Ce script calcule aussi les accidents en agglomération et le niveau de SDOR de
-# l’accident. Attention, la classe d’entité ponctuelle en sortie comporte des
-# accidents sans géométrie car ils ne sont pas localisables sur le référentiel
-# routier. Un champ « LOCALISATION » permet de les identifier.
+# Le script gÃ©nÃ¨re la donnÃ©e accident en ponctuel sur une plage dâ€™annÃ©e choisie
+# avec les champs de la table accident (caractÃ©ristique) et la table lieux souhaitÃ©s.
+# Ce script calcule aussi les accidents en agglomÃ©ration et le niveau de SDOR de
+# lâ€™accident. Attention, la classe dâ€™entitÃ© ponctuelle en sortie comporte des
+# accidents sans gÃ©omÃ©trie car ils ne sont pas localisables sur le rÃ©fÃ©rentiel
+# routier. Un champ Â« LOCALISATION Â» permet de les identifier.
 #-------------------------------------------------------------------------------
 
 import arcpy,os,sys
@@ -36,15 +36,15 @@ def ERREUR(txt):
 
 def CLEAN_FIELDS (laTable,lesChampsOk):
     """
-    Supprime les cahmps de la table à l'execption de ceux de la liste en entrée
-    et de ceux indiqué comme obligatoire dans la structure de la table (champs
-    systémes de la données objectid, shape, ...)
+    Supprime les cahmps de la table Ã  l'execption de ceux de la liste en entrÃ©e
+    et de ceux indiquÃ© comme obligatoire dans la structure de la table (champs
+    systÃ©mes de la donnÃ©es objectid, shape, ...)
     """
     lesChamps = []
     for f in arcpy.ListFields(laTable):
         arcpy.SetProgressorLabel("CleanField : {}".format(f.name))
         if not f.required:
-            # élimine les champs systémes.
+            # Ã©limine les champs systÃ©mes.
             lesChamps.append(str(f.name))
             if not f.name in lesChampsOk:
                 arcpy.DeleteField_management(laTable,f.name)
@@ -63,11 +63,11 @@ def CLEAN_FIELDS (laTable,lesChampsOk):
 ##
 ##def VerifAbsence(laData):
 ##    if arcpy.Exists(laData):
-##        ERREUR("\t - " + str(laData) + "' existe déjà ! ")
+##        ERREUR("\t - " + str(laData) + "' existe dÃ©jÃ  ! ")
 ##        sys.exit()
 ##    else:
 ##
-##        TRACE("\t - " + str(laData) + "' : A créer")
+##        TRACE("\t - " + str(laData) + "' : A crÃ©er")
 
 arcpy.env.overwriteOutput = False
 
@@ -85,13 +85,13 @@ def PreparationAcc(laGdbW,laT_Acc,lesChampsAcc,laT_Lieu,lesChampLieu,AN_MAX,AN_M
     laT_acc         = laGdbW + os.sep + Nom_acc
     laT_acc_x_agglo = laGdbW + os.sep + "ACCIDENT_X_AGGLO"
     laT_acc_x_Sdor  = laGdbW + os.sep + "ACCIDENT_X_SDOR"
-#--------------------------------------------Import des données soucres dans la gdb de travail--------------------------------------------------
+#--------------------------------------------Import des donnÃ©es soucres dans la gdb de travail--------------------------------------------------
 ##    VerifAbsence (Pt_acc_lieux)
     exp_tab=[laT_Acc,laT_Lieu,laT_Sdor]
     lesTableImportNom = []
     listF_acc_oblige = ["ID_ACCIDENT","C_AN","T_NB_TOTAL_TUES","T_NB_TOTAL_BG","T_NB_TOTAL_BL"]
     listF_lieux_oblige = ["ID_ACCIDENT","CG_ROUTE","CG_CUMUL"]
-    TRACE ("Contrôle des champs obligatoires des tables accident et lieux pour les traitements")
+    TRACE ("ContrÃ´le des champs obligatoires des tables accident et lieux pour les traitements")
     for f in listF_acc_oblige:
         if f not in lesChampsAcc:
             lesChampsAcc.append (f)
@@ -99,7 +99,7 @@ def PreparationAcc(laGdbW,laT_Acc,lesChampsAcc,laT_Lieu,lesChampLieu,AN_MAX,AN_M
         if f not in lesChampLieu:
             lesChampLieu.append (f)
 
-    TRACE ("Import des données sources :")
+    TRACE ("Import des donnÃ©es sources :")
     if AN_MIN == 0 :
         AN_MIN = min([int(row.C_AN) for row in arcpy.SearchCursor(laT_Acc)])
         del row
@@ -133,7 +133,7 @@ def PreparationAcc(laGdbW,laT_Acc,lesChampsAcc,laT_Lieu,lesChampLieu,AN_MAX,AN_M
     CleanAgglo.aggloClean(laGdbW,laT_Agglo)
 
 #--------------------------------------------TRAITEMENTS--------------------------------------------------
-# ----- Définition des tables de travail issues de l'import
+# ----- DÃ©finition des tables de travail issues de l'import
     laT_AccW   = laGdbW + os.sep + lesTableImportNom[0]
     laT_LieuW  = laGdbW + os.sep + lesTableImportNom[1]
     laT_SdorW  = laGdbW + os.sep + lesTableImportNom[2]
@@ -145,20 +145,20 @@ def PreparationAcc(laGdbW,laT_Acc,lesChampsAcc,laT_Lieu,lesChampLieu,AN_MAX,AN_M
     TRACE ("\t- Nettoyage des champs {}".format (os.path.split(laT_LieuW)[1]))
     CLEAN_FIELDS(laT_LieuW,lesChampLieu)
 
-# ----- Création de la classe d'entité ponctuelle accident
-    TRACE ("Génération des accidents en ponctuel :")
+# ----- CrÃ©ation de la classe d'entitÃ© ponctuelle accident
+    TRACE ("GÃ©nÃ©ration des accidents en ponctuel :")
     arcpy.MakeTableView_management (laT_AccW,Vue_acc_w)
     listDataTemp.append (Vue_acc_w)
     arcpy.MakeTableView_management (laT_LieuW,Vue_lieux_w)
     listDataTemp.append (Vue_lieux_w)
     TRACE ("\t- Jointure {} et {}".format (os.path.split(laT_LieuW)[1],os.path.split(laT_AccW)[1]))
     arcpy.AddJoin_management (Vue_lieux_w,"ID_ACCIDENT",Vue_acc_w,"ID_ACCIDENT","KEEP_COMMON")
-    TRACE ("\t- Création de l'événnement avec jointure en ponctuel")
+    TRACE ("\t- CrÃ©ation de l'Ã©vÃ©nnement avec jointure en ponctuel")
     arcpy.MakeRouteEventLayer_lr (in_routes= leRouteM,route_id_field ="ROUTE",
                               in_table= Vue_lieux_w,in_event_properties= "{}.CG_ROUTE POINT {}.CG_CUMUL".format (os.path.split(laT_LieuW)[1],os.path.split(laT_LieuW)[1])
                               ,out_layer = Evt_acc_lieux)
     listDataTemp.append (Evt_acc_lieux)
-    TRACE ("\t- Transformation en classe d'entité point : création {}".format (Nom_acc_lieux))
+    TRACE ("\t- Transformation en classe d'entitÃ© point : crÃ©ation {}".format (Nom_acc_lieux))
     arcpy.FeatureClassToFeatureClass_conversion (Evt_acc_lieux,laGdbW,Nom_acc_lieux)
     TRACE ("\t- Renommage des champs de {}".format (Nom_acc_lieux))
     lesnewChamps = []
@@ -183,20 +183,20 @@ def PreparationAcc(laGdbW,laT_Acc,lesChampsAcc,laT_Lieu,lesChampLieu,AN_MAX,AN_M
                 lesnewChamps.append (f.name)
     dropfields = ["OBJECTID_1", "ID_ACCIDENT_1"]
     arcpy.DeleteField_management (Pt_acc_lieux, dropfields)
-    TRACE("\t- Calcul des blessés au total (graves + légers)")
+    TRACE("\t- Calcul des blessÃ©s au total (graves + lÃ©gers)")
     arcpy.AddField_management (Pt_acc_lieux,"TOTAL_BLESSES","SHORT")
     arcpy.CalculateField_management (Pt_acc_lieux,"TOTAL_BLESSES","[T_NB_TOTAL_BG]+[T_NB_TOTAL_BL]")
 
-# ----- Identification des accidents en agglomération
+# ----- Identification des accidents en agglomÃ©ration
     TRACE("Identification des accidents en agglomeration :")
-    TRACE ("\t- Superpostion d'itinéraire accident et agglo")
+    TRACE ("\t- Superpostion d'itinÃ©raire accident et agglo")
     arcpy.TableToTable_conversion (Pt_acc_lieux,laGdbW,Nom_acc)
     listDataTemp.append (laT_acc)
     arcpy.OverlayRouteEvents_lr (laT_acc,in_event_properties= "CG_ROUTE POINT CG_CUMUL",overlay_table=laT_AggloW,overlay_event_properties="ROUTE LINE CUMULD CUMULF",
                              overlay_type="INTERSECT",out_table= laT_acc_x_agglo,out_event_properties="CG_ROUTE POINT CG_CUMUL",  zero_length_events="NO_ZERO",
                              in_fields="FIELDS",build_index="NO_INDEX")
     listDataTemp.append (laT_acc_x_agglo)
-    TRACE ("\t- Récupération du champ des accidents en agglo")
+    TRACE ("\t- RÃ©cupÃ©ration du champ des accidents en agglo")
     arcpy.JoinField_management (Pt_acc_lieux,"ID_ACCIDENT",laT_acc_x_agglo,"ID_ACCIDENT","EN_AGGLO")
 
 # ----- Identification du SDOR des accidents
@@ -206,10 +206,10 @@ def PreparationAcc(laGdbW,laT_Acc,lesChampsAcc,laT_Lieu,lesChampLieu,AN_MAX,AN_M
                              overlay_type="INTERSECT",out_table= laT_acc_x_Sdor,out_event_properties="CG_ROUTE POINT CG_CUMUL",  zero_length_events="NO_ZERO",
                              in_fields="FIELDS",build_index="NO_INDEX")
     listDataTemp.append (laT_acc_x_Sdor)
-    TRACE ("\t- Récupération du champ ENJEU du SDOR")
+    TRACE ("\t- RÃ©cupÃ©ration du champ ENJEU du SDOR")
     arcpy.JoinField_management (Pt_acc_lieux,"ID_ACCIDENT",laT_acc_x_Sdor,"ID_ACCIDENT","ENJEU")
 
-# ----- Identification des accidents sans géométrie
+# ----- Identification des accidents sans gÃ©omÃ©trie
     arcpy.AddField_management (Pt_acc_lieux,"LOCALISATION","SHORT")
     rows = arcpy.da.UpdateCursor (Pt_acc_lieux,["SHAPE@X","LOCALISATION"])
     for row in rows:
@@ -221,13 +221,13 @@ def PreparationAcc(laGdbW,laT_Acc,lesChampsAcc,laT_Lieu,lesChampLieu,AN_MAX,AN_M
 
     del row,rows
 
-    TRACE("Suppression des traitements intermédiaires")
+    TRACE("Suppression des traitements intermÃ©diaires")
     for t in listDataTemp:
         if arcpy.Exists (t):
             arcpy.Delete_management (t)
-    TRACE ("Terminé")
+    TRACE ("TerminÃ©")
 
-#--------------------------------------------LES VARIABLES ARCGIS--------------------------------------------------
+#--------------------------------------------VARIABLES MAIN--------------------------------------------------
 
 if __name__ == '__main__':
     Test = False
@@ -249,19 +249,19 @@ if __name__ == '__main__':
     if Test == False :
         laGdbW            = arcpy.GetParameterAsText(0) # Chemin de la gdb de travail
 
-        laT_Acc           = arcpy.GetParameterAsText(1) # Table accident (caractéristiques) de la base de données accident SDE
-        laChaineChampAcc  = arcpy.GetParameterAsText(2) # Choix des champs de la table accident à conserver
+        laT_Acc           = arcpy.GetParameterAsText(1) # Table accident (caractÃ©ristiques) de la base de donnÃ©es accident SDE
+        laChaineChampAcc  = arcpy.GetParameterAsText(2) # Choix des champs de la table accident Ã  conserver
         lesChampsAcc      = laChaineChampAcc.split(";")
 
-        laT_Lieu          = arcpy.GetParameterAsText(3) # Table lieux de la base de données accident SDE
-        laChaineChampLieu = arcpy.GetParameterAsText(4) # Choix des champs de la table lieux à conserver
+        laT_Lieu          = arcpy.GetParameterAsText(3) # Table lieux de la base de donnÃ©es accident SDE
+        laChaineChampLieu = arcpy.GetParameterAsText(4) # Choix des champs de la table lieux Ã  conserver
         lesChampLieu      = laChaineChampLieu.split(";")
 
-        AN_MAX            = arcpy.GetParameter (5) # Année max des accdients à récupérer
-        AN_MIN            = arcpy.GetParameter (6) # Année mini  des accidents à récupérer
+        AN_MAX            = arcpy.GetParameter (5) # AnnÃ©e max des accdients Ã  rÃ©cupÃ©rer
+        AN_MIN            = arcpy.GetParameter (6) # AnnÃ©e mini  des accidents Ã  rÃ©cupÃ©rer
 
-        laT_Agglo         = arcpy.GetParameterAsText(7) # Table des section en agglomératio SDE
-        laT_Sdor          = arcpy.GetParameterAsText(8) # Table du SDOR (hiérarchisation route) SDE
-        leRouteM          = arcpy.GetParameterAsText(9) # Référentiel routier SDE
+        laT_Agglo         = arcpy.GetParameterAsText(7) # Table des section en agglomÃ©ratio SDE
+        laT_Sdor          = arcpy.GetParameterAsText(8) # Table du SDOR (hiÃ©rarchisation route) SDE
+        leRouteM          = arcpy.GetParameterAsText(9) # RÃ©fÃ©rentiel routier SDE
 
     PreparationAcc(laGdbW,laT_Acc,lesChampsAcc,laT_Lieu,lesChampLieu,AN_MAX,AN_MIN,laT_Agglo,laT_Sdor,leRouteM)
