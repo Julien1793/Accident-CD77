@@ -51,7 +51,7 @@ def CLEAN_FIELDS (laTable,lesChampsOk):
 
     for champ in lesChampsOk:
         if not champ in lesChamps:
-            arcpy.AddWarning("le champs {} n'existe pas dans la {}".format(champ,laTable))
+            arcpy.AddWarning("le champs {} n'existe pas dans {}".format(champ,laTable))
 
 ##def VerifExistance(laData):
 ##    if not arcpy.Exists(laData):
