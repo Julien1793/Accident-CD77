@@ -15,7 +15,7 @@
 import arcpy,os,sys
 from datetime import datetime
 
-##sys.path.append(r'K:\SIG\DPR\08_OUTILS\8.6_SCRIPT\PYTHON\_Biblio_DPR')
+##sys.path.append(r'')#Chemin bibliothèque python interne
 ##import Route77
 
 sys.path.append (r'K:\SIG\DPR\08_OUTILS\8.6_SCRIPT\PYTHON\Traitement_des_donnees_thematiques\Agglo')
